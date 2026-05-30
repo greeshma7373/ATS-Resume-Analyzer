@@ -1,4 +1,3 @@
-
 # app.py
 # AI Resume Analyzer & ATS Score Checker
 # 100% offline — no paid APIs required
