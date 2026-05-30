@@ -1,6 +1,3 @@
-# analyzers/skill_extractor.py
-# Extracts and categorizes skills from resume text using NLP + rule-based matching
-
 import re
 from typing import Dict, List, Tuple
 import sys
@@ -12,19 +9,18 @@ from data.skills_data import SKILLS_DB, SOFT_SKILLS, ACTION_VERBS
 
 
 def load_nlp_model():
-    """Load spaCy model with automatic download if missing."""
+    """Load spaCy model safely — no subprocess calls."""
     try:
         import spacy
         try:
             nlp = spacy.load("en_core_web_sm")
         except OSError:
-            # Auto-download
-            import subprocess
-            subprocess.run(
-                [sys.executable, "-m", "spacy", "download", "en_core_web_sm"],
-                check=True, capture_output=True
-            )
-            nlp = spacy.load("en_core_web_sm")
+            try:
+                from spacy.cli import download as spacy_download
+                spacy_download("en_core_web_sm")
+                nlp = spacy.load("en_core_web_sm")
+            except Exception:
+                return None
         return nlp
     except Exception:
         return None
